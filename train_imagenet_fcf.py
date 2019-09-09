@@ -46,10 +46,12 @@ def main():
     global args, best_prec1
     args = parser.parse_args()
     
+    print("start loading data")
     #dataset
     trainloader=imagenet_traindata(args.batch_size)
     testloader=imagenet_testdata(args.batch_size)
-    
+    print("finish loading data")
+
     #model
     model = training_models[args.model](mode = args.training_mode)
     pretrained_dict = torch.load(args.pretrained_model)   
