@@ -77,18 +77,39 @@ def sparse_k(model, args):
 
 def store_v(model):
     np_v_list = []
+    zero_count = 0
+    total_count = 0
     for k, m in enumerate(model.modules()):
-        if isinstance(m, modules.SparseConv2d):
+        if isinstance(m, SparseConv2d):
             np_v = m.v.data.cpu().numpy().reshape(-1)
             np_v_list.append(np_v)
-
+            total_count += np_v.size
             zeros = np.squeeze(np.argwhere(np_v < 1e-1))
+            zero_count += zeros.size
+            # if zeros.size != 0:
+            #     print('np_v is below threshold')
+            #     x = 0
             np_v[zeros] = 0
             zeros = np.squeeze(np.argwhere(np_v > 1e-1))
             np_v[zeros] = 1
             m.v.data = torch.from_numpy(np_v).float().cuda()
-    
+    print('Prune percentage: {}'.format(zero_count / total_count))
     return np_v_list
+
+# def store_v(model):
+#     np_v_list = []
+#     for k, m in enumerate(model.modules()):
+#         if isinstance(m, modules.SparseConv2d):
+#             np_v = m.v.data.cpu().numpy().reshape(-1)
+#             np_v_list.append(np_v)
+
+#             zeros = np.squeeze(np.argwhere(np_v < 1e-1))
+#             np_v[zeros] = 0
+#             zeros = np.squeeze(np.argwhere(np_v > 1e-1))
+#             np_v[zeros] = 1
+#             m.v.data = torch.from_numpy(np_v).float().cuda()
+    
+#     return np_v_list
 
 
 def reload_v(model, np_v_list):
