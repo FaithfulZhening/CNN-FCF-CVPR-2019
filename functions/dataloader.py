@@ -37,8 +37,8 @@ def cifar10_testdata(batch_size):
 '''
 imagenet
 '''
-traindir = os.path.join('../imagenet2012', 'train')
-valdir = os.path.join('../imagenet2012', 'val')
+traindir = os.path.join('../Data/imagenet_FULL', 'train')
+valdir = os.path.join('../Data/imagenet_FULL', 'test')
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                  std=[0.229, 0.224, 0.225])
 def imagenet_traindata(batch_size):
